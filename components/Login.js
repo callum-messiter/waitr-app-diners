@@ -11,10 +11,6 @@ class Login extends React.Component {
     /* Replace instance method with a new 'bound' version */
     this.api_logUserIn = this.api_logUserIn.bind(this);
   }
-
-  componentWillMount() {
-    console.log('user (login): ' + JSON.stringify(this.props.user));
-  }
   
   api_logUserIn() {
     if(this.email == undefined || this.password == undefined) return;

@@ -16,6 +16,21 @@ function waitrApi_GET(path, token=null) {
     });
 };
 
+function waitrApi_POST(path, token, params={}) {
+	return new Promise((resolve, reject) => {
+		const req = {
+			method: 'post', 
+			url: path,
+			data: params,
+			headers: {'Authorization': token}
+		}
+
+		api(req)
+		.then((res) => { return resolve(res); })
+		.catch((err) => { return reject(err.response); });
+	});
+}
+
 export const user = {
 	login(email, password) {
 		const queryString = '?email=' + email + '&password=' + password;
@@ -25,8 +40,9 @@ export const user = {
 	logout(token) {
 		return waitrApi_GET('auth/logout', token);
 	},
-	signup(email, password, fName, lName) {
+	signup(params, token) {
 		const path = 'user/d';
+		return waitrApi_POST(path, token, params);
 	}
 }
 

@@ -7,12 +7,6 @@ import { order } from '../utilities/waitrApi';
 import moment from 'moment';
 
 class MyOrdersScreen extends React.Component {
-  
-  constructor(props) {
-    super(props);
-    /* Replace instance method with a new 'bound' version */
-    this.logUserOut = this.logUserOut.bind(this);
-  }
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -41,17 +35,12 @@ class MyOrdersScreen extends React.Component {
     return orders;
   }
 
-  logUserOut() {
-    this.props.deauthenticateUser();
-    // this.props.navigation.navigate('Landing');
-  }
-
   render() {
     return (
       <View>
         <Button 
           title='Logout'
-          onPress={this.logUserOut}
+          onPress={ () => {this.props.deauthenticateUser();} }
         />
         {
           this.props.orders.map((order) => (

@@ -1,28 +1,73 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Image, Text, TextInput, Button } from 'react-native';
+import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
+import { setUser } from '../actions';
 import { user } from '../utilities/waitrApi';
+import * as validator from '../utilities/fieldValidator';
 
 class SignupScreen extends React.Component {
 
   constructor(props) {
     super(props);
     /* Replace instance method with a new 'bound' version */
-    this.api_logUserIn = this.api_logUserIn.bind(this);
+    this.api_registerUser = this.api_registerUser.bind(this);
+    this.validateAllFields = this.validateAllFields.bind(this);
   }
-  
-  api_logUserIn() {
-    if(this.email == undefined || this.password == undefined) return;
+
+  api_registerUser() {
+    const params = {
+      firstName: this.firstName, 
+      lastName: this.lastName, 
+      email: this.email, 
+      password: this.confPassword
+    };
     
-    user.login(this.email, this.password)
+    const allFieldsValid = this.validateAllFields(params);
+    if(allFieldsValid !== true) {
+      const error = allFieldsValid;
+      /* TODO: display flash message */
+      console.log(error);
+    }
+    
+    user.signup(params, this.props.user.token)
     .then((res) => {
-      console.log(JSON.stringify(res));
+      /* For now, skip email verification; log user in automatically */
+      return user.login(this.email, this.confPassword);
+    }).then((res) => {
       res.data.data.user.isAuth = true;
       this.props.setUser(res.data.data.user);
-      // this.props.navigation.navigate('Main');
     }).catch((err) => {
-      console.log(err);
+      console.log('user creation err: ' + JSON.stringify(err));
     });
+  }
+  
+  validateAllFields(values) {
+    if( validator.someFieldsAreEmpty(values) ) {
+      return 'missing required fields';
+    }
+
+    if( !validator.isEmail(values.email) ) {
+      return 'not a valid email';
+    }
+
+    if( !validator.stringLengthBetween(values.firstName, 1, 100) ) {
+      return 'first name must be between 1 and 100 characters';
+    }
+
+    if( !validator.stringLengthBetween(values.lastName, 1, 100) ) {
+      return 'last name must be between 1 and 100 characters';
+    }
+
+    if( !validator.stringLengthBetween(this.password, 6, 100) ) {
+      return 'password must be between 6 and 100 characters';
+    }
+
+    if( !validator.areEqual(this.password, values.password) ) {
+      return 'Please ensure your passwords match';
+    }
+
+    return true;
   }
 
   render() {
@@ -58,7 +103,12 @@ class SignupScreen extends React.Component {
             style={styles.input}
             onChangeText={(text) => this.password = text}
           />
-          <Button title='Signup' color='#fff' onPress={this.api_logUserIn} />
+          <TextInput
+            placeholder='Confirm your password' 
+            style={styles.input}
+            onChangeText={(text) => this.confPassword = text}
+          />
+          <Button title='Signup' color='#fff' onPress={this.api_registerUser} />
           <Button 
             title='Go to login'
             color='#fff' 
@@ -80,7 +130,6 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    flexGrow: 1,
     justifyContent: 'flex-start' 
   },
   logo: {
@@ -95,12 +144,17 @@ const styles = StyleSheet.create({
     textAlign: 'center' 
   },
   formContainer: {
-    padding: 50
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   input: {
-    height: 20,
+    width: 300,
+    borderRadius: 25,
+    paddingHorizontal: 16,
+    marginVertical: 10,
+    fontSize: 16,
     backgroundColor: '#fff',
-    marginBottom: 20
   }
 });
 
@@ -108,4 +162,4 @@ const mapStoreToProps = state => ({
   user: state.user
 });
 
-export default connect(mapStoreToProps)(SignupScreen);
+export default connect(mapStoreToProps, { setUser })(SignupScreen);

@@ -14,7 +14,6 @@ class RestaurantListScreen extends React.Component {
   };
 
   componentWillMount() {
-    console.log('user (r list): ' + JSON.stringify(this.props.user));
     this.api_getListOfRestaurants();
   }
 
