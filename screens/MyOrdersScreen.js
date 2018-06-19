@@ -1,13 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Button } from 'react-native';
 import { Text, ListItem } from 'react-native-elements';
-import { setOrders } from '../actions';
+import { setOrders, deauthenticateUser } from '../actions';
 import { order } from '../utilities/waitrApi';
 import moment from 'moment';
 
 class MyOrdersScreen extends React.Component {
   
+  constructor(props) {
+    super(props);
+    /* Replace instance method with a new 'bound' version */
+    this.logUserOut = this.logUserOut.bind(this);
+  }
+
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'My Orders',
@@ -35,9 +41,18 @@ class MyOrdersScreen extends React.Component {
     return orders;
   }
 
+  logUserOut() {
+    this.props.deauthenticateUser();
+    // this.props.navigation.navigate('Landing');
+  }
+
   render() {
     return (
       <View>
+        <Button 
+          title='Logout'
+          onPress={this.logUserOut}
+        />
         {
           this.props.orders.map((order) => (
             <ListItem
@@ -65,4 +80,7 @@ const mapStoreToProps = state => ({
   user: state.user
 });
 
-export default connect(mapStoreToProps, { setOrders })(MyOrdersScreen);
+export default connect(mapStoreToProps, { 
+  setOrders, 
+  deauthenticateUser 
+})(MyOrdersScreen);

@@ -1,19 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Image, Text, TextInput, Button } from 'react-native';
-import { setUser } from '../actions';
 import { user } from '../utilities/waitrApi';
 
-class Login extends React.Component {
+class SignupScreen extends React.Component {
 
   constructor(props) {
     super(props);
     /* Replace instance method with a new 'bound' version */
     this.api_logUserIn = this.api_logUserIn.bind(this);
-  }
-
-  componentWillMount() {
-    console.log('user (login): ' + JSON.stringify(this.props.user));
   }
   
   api_logUserIn() {
@@ -44,7 +39,17 @@ class Login extends React.Component {
 
         <View style={styles.formContainer}>
           <TextInput
-            placeholder='Enter your email'
+            placeholder='Enter your first name' 
+            style={styles.input}
+            onChangeText={(text) => this.firstName = text}
+          />
+          <TextInput
+            placeholder='Enter your last name' 
+            style={styles.input}
+            onChangeText={(text) => this.lastName = text}
+          />
+          <TextInput
+            placeholder='Enter your email' 
             style={styles.input}
             onChangeText={(text) => this.email = text}
           />
@@ -53,12 +58,12 @@ class Login extends React.Component {
             style={styles.input}
             onChangeText={(text) => this.password = text}
           />
-          <Button title='Login' color='#fff' onPress={this.api_logUserIn} />
+          <Button title='Signup' color='#fff' onPress={this.api_logUserIn} />
           <Button 
-            title='Go to signup'
+            title='Go to login'
             color='#fff' 
             onPress={() => {
-              this.props.navigation.navigate('Signup');
+              this.props.navigation.navigate('Login');
             }}
           />
         </View>
@@ -96,9 +101,6 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: '#fff',
     marginBottom: 20
-  },
-  signupLink: {
-    color: '#fff'
   }
 });
 
@@ -106,4 +108,4 @@ const mapStoreToProps = state => ({
   user: state.user
 });
 
-export default connect(mapStoreToProps, { setUser })(Login);
+export default connect(mapStoreToProps)(SignupScreen);
