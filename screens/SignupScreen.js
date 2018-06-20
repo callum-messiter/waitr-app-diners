@@ -4,7 +4,7 @@ import { StyleSheet, View, Image, Text, TextInput, Button } from 'react-native';
 import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
 import { setUser } from '../actions';
 import { user } from '../utilities/waitrApi';
-import * as validator from '../utilities/fieldValidator';
+import * as V from '../utilities/fieldValidator';
 
 class SignupScreen extends React.Component {
 
@@ -43,30 +43,12 @@ class SignupScreen extends React.Component {
   }
   
   validateAllFields(values) {
-    if( validator.someFieldsAreEmpty(values) ) {
-      return 'missing required fields';
-    }
-
-    if( !validator.isEmail(values.email) ) {
-      return 'not a valid email';
-    }
-
-    if( !validator.stringLengthBetween(values.firstName, 1, 100) ) {
-      return 'first name must be between 1 and 100 characters';
-    }
-
-    if( !validator.stringLengthBetween(values.lastName, 1, 100) ) {
-      return 'last name must be between 1 and 100 characters';
-    }
-
-    if( !validator.stringLengthBetween(this.password, 6, 100) ) {
-      return 'password must be between 6 and 100 characters';
-    }
-
-    if( !validator.areEqual(this.password, values.password) ) {
-      return 'Please ensure your passwords match';
-    }
-
+    if( V.someFieldsAreEmpty(values) ) return V.errors.fieldsEmpty;
+    if( !V.isEmail(values.email) ) return V.errors.invalidEmail;
+    if( !V.stringLengthBetween(values.firstName, 1, 100) ) return V.errors.firstNameLength;
+    if( !V.stringLengthBetween(values.lastName, 1, 100) ) return V.errors.lastNameLength;
+    if( !V.stringLengthBetween(this.password, 6, 100) ) return V.errors.passLength;
+    if( !V.areEqual(this.password, values.password) ) return V.errors.passMismatch;
     return true;
   }
 

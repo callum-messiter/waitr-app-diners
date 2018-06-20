@@ -30,3 +30,12 @@ export const isPositiveInt = (val) => {
 	var n = Math.floor(Number(val));
     return (n !== Infinity && String(n) === val && n >= 0);
 }
+
+export const errors = {
+	fieldsEmpty: 'Please fill in all the fields.',
+	invalidEmail: 'Please provide a valid email address.',
+	firstNameLength: 'The first name value must be between 1 and 100 characters.',
+	lastNameLength: 'The last name value must be between 1 and 100 characters.',
+	passLength: 'Passwords must be between 6 and 100 characters.',
+	passMismatch: 'Please ensure your passwords match.'
+}
