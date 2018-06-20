@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, ListItem } from 'react-native-elements';
 import { setRestaurantMenu } from '../actions';
 import { restaurant } from '../utilities/waitrApi';
@@ -33,10 +33,11 @@ class CategoryListScreen extends React.Component {
   render() {
     return (
       <View>
-        {
-          this.props.restaurantMenu.categories.map((category) => (
+        <FlatList
+          data={this.props.restaurantMenu.categories}
+          keyExtractor={category => category.categoryId}
+          renderItem={({ item: category }) => (
             <ListItem
-              key={category.categoryId}
               title={category.name}
               onPress={() => {
                 this.props.navigation.navigate('ItemList', {
@@ -45,8 +46,8 @@ class CategoryListScreen extends React.Component {
                 });
               }}
             />
-          ))
-        }
+          )}
+        />
       </View>
     )
   }

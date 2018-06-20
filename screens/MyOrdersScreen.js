@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Button } from 'react-native';
-import { Text, ListItem } from 'react-native-elements';
+import { StyleSheet, View, Text, Button, FlatList } from 'react-native';
+import { List, ListItem } from 'react-native-elements';
 import { setOrders, deauthenticateUser } from '../actions';
 import { order } from '../utilities/waitrApi';
 import moment from 'moment';
@@ -42,10 +42,11 @@ class MyOrdersScreen extends React.Component {
           title='Logout'
           onPress={ () => {this.props.deauthenticateUser();} }
         />
-        {
-          this.props.orders.map((order) => (
+        <FlatList
+          data={this.props.orders}
+          keyExtractor={order => order.orderId}
+          renderItem={({ item: order }) => (
             <ListItem
-              key={order.orderId}
               title={`${order.restaurantName} | £${parseFloat(order.price).toFixed(2)}`}
               subtitle={order.timeAgo}
               onPress={() => {
@@ -54,14 +55,18 @@ class MyOrdersScreen extends React.Component {
                 });
               }}
             />
-          ))
-        }
+          )}
+        />
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  listContainer: {
+    borderTopWidth: 0,
+    borderBottomWidth: 0
+  }
 });
 
 const mapStoreToProps = state => ({

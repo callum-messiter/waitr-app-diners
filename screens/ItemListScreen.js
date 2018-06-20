@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, ListItem } from 'react-native-elements';
 import { setRestaurantMenu } from '../actions';
 import { restaurant } from '../utilities/waitrApi';
@@ -19,18 +19,21 @@ class ItemListScreen extends React.Component {
   }
 
   render() {
+    const items = this.props.restaurantMenu.categories.find((c) => {
+      return c.categoryId == this.props.navigation.getParam('categoryId', null);
+    }).items;
+
     return (
       <View>
-        {
-          this.props.restaurantMenu.categories.find((c) => {
-            return c.categoryId == this.props.navigation.getParam('categoryId', null);
-          }).items.map((item) => (
+        <FlatList
+          data={items}
+          keyExtractor={item => item.itemId}
+          renderItem={({ item }) => (
             <ListItem
-              key={item.itemId}
               title={item.name}
             />
-          ))
-        }
+          )}
+        />
       </View>
     )
   }
