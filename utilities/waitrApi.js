@@ -1,72 +1,60 @@
 import { apiBaseUrl } from '../config';
 import axios from 'axios';
+import { isEmpty as _isEmpty } from 'underscore';
 
 const api = axios.create({
   baseURL: apiBaseUrl
 });
 
-function waitrApi_GET(path, token=null) {
+function callWaitrApi(method, path, token=null, params={}) {
 	return new Promise((resolve, reject) => {
-		const req = { method: 'get', url: path };
-		if(token != null) req.headers = {'Authorization': token};
-		
+		const req = { method: method, url: path };
+		if(!_isEmpty(params)) { req.data = params; };
+		if(token != null) {
+			req.headers = { 'Authorization': token } 
+		};
+
 		api(req)
 		.then((res) => { return resolve(res); })
 		.catch((err) => { return reject(err.response); }); 
     });
 };
 
-function waitrApi_POST(path, token, params={}) {
-	return new Promise((resolve, reject) => {
-		const req = {
-			method: 'post', 
-			url: path,
-			data: params,
-			headers: {'Authorization': token}
-		}
-
-		api(req)
-		.then((res) => { return resolve(res); })
-		.catch((err) => { return reject(err.response); });
-	});
-}
-
 export const user = {
 	login(email, password) {
 		const queryString = '?email=' + email + '&password=' + password;
 		const path = 'auth/login/d' + queryString;
-		return waitrApi_GET(path);
+		return callWaitrApi('get', path);
 	},
 	logout(token) {
-		return waitrApi_GET('auth/logout', token);
+		return callWaitrApi('get', 'auth/logout', token);
 	},
-	signup(params, token) {
-		const path = 'user/d';
-		return waitrApi_POST(path, token, params);
+	signup(params) {
+		return callWaitrApi('post', 'user/d', null, params);
 	}
 }
 
 /* TODO: a single API path should return all this data together */
 export const restaurant = {
 	getList(token) {
-		return waitrApi_GET('restaurant', token);
+		return callWaitrApi('get', 'restaurant', token);
 	},
 	getPaymentDetails(token, restaurantId) {
 		const path = 'payment/restaurantDetails/' + restaurantId;
-		return waitrApi_GET(path, token);
+		return callWaitrApi('get', path, token);
 	},
 	getMenu(token, menuId) {
 		const path = 'menu/' + menuId;
-		return waitrApi_GET(path, token);
+		return callWaitrApi('get', path, token);
 	}
 }
 
 export const order = {
 	getList(token) {
-		return waitrApi_GET('order/history', token);
+		return callWaitrApi('get', 'order/history', token);
 	},
 	get(token, orderId) {
 		const path = 'order/live/' + orderId;
-		return waitrApi_GET(path, token);
+		return callWaitrApi('get', path, token);
 	}
 }
