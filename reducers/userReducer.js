@@ -10,14 +10,11 @@ const initialState = {
 
 export default state = (state = initialState, action) => {
 	switch(action.type) {
-		/* first add the isAuth property, since the API does not return this */
 		case actions.SET_USER: return action.payload; break;
-		case actions.AUTH_USER: /* send back copy of initial state with isAuth set to true */ break;
+		case actions.AUTH_USER: break;
 		case actions.DEAUTH_USER:
 			return {
-				userId: state.userId,
-				email: state.email,
-				role: state.role,
+				...state,
 				token: null,
 				isAuth: false
 			}

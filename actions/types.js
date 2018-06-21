@@ -12,3 +12,9 @@ export const restaurantActions = {
 export const orderActions = {
 	SET_ORDERS: 'SET_ORDERS'
 };
+
+export const cartActions = {
+	ADD_CART_ITEM: 'ADD_CART_ITEM',
+	REMOVE_CART_ITEM: 'REMOVE_CART_ITEM',
+	RESET_CART: 'RESET_CART'
+}
