@@ -4,14 +4,20 @@ import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, ListItem } from 'react-native-elements';
 import { setRestaurantMenu } from '../actions';
 import { restaurant } from '../utilities/waitrApi';
+import CartButton from '../components/CartButton';
 
 class CategoryListScreen extends React.Component {
   
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam('restaurantName', 'Menu'),
-      headerStyle: {},
-      headerTitleStyle: {},
+      headerRight: ( 
+        <CartButton 
+          onPress={() => navigation.navigate('Checkout', {
+            restaurantName: navigation.getParam('restaurantName', null)
+          })}
+        /> 
+      )
     };
   };
 
@@ -19,6 +25,10 @@ class CategoryListScreen extends React.Component {
     const token = this.props.user.token;
     const menuId = this.props.navigation.getParam('menuId', null);
     this.api_getRestaurantMenu(token, menuId);
+  }
+
+  componentDidMount() {
+    this.props.navigation.setParams({ increaseCount: this._increaseCount });
   }
 
   api_getRestaurantMenu(token, menuId) {
@@ -42,7 +52,10 @@ class CategoryListScreen extends React.Component {
               onPress={() => {
                 this.props.navigation.navigate('ItemList', {
                   categoryId: category.categoryId,
-                  categoryName: category.name
+                  categoryName: category.name,
+                  restaurantId: this.props.navigation.getParam('restaurantId', null),
+                  restaurantName: this.props.navigation.getParam('restaurantName', null),
+                  menuId: this.props.navigation.getParam('menuId', null)
                 });
               }}
             />

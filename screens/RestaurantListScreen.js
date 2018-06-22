@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
 
 const mapStoreToProps = state => ({
   restaurants: state.restaurants.list,
-  user: state.user
+  user: state.user,
 });
 
 export default connect(mapStoreToProps, { setRestaurants })(RestaurantListScreen);

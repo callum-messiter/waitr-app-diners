@@ -14,10 +14,7 @@ import LoginComponent from '../components/Login';
 const RestaurantStack = createStackNavigator({
   RestaurantList: RestaurantListScreen,
   CategoryList: CategoryListScreen,
-  ItemList: ItemListScreen
-});
-
-const CheckoutStack = createStackNavigator({
+  ItemList: ItemListScreen,
   Checkout: CheckoutScreen,
 });
 
@@ -40,16 +37,6 @@ RestaurantStack.navigationOptions = {
   ),
 };
 
-CheckoutStack.navigationOptions = {
-  tabBarLabel: 'Place Order',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? `ios-paper-plane${focused ? '' : '-outline'}` : 'md-paper-plane'}
-    />
-  ),
-};
-
 OrderStack.navigationOptions = {
   tabBarLabel: 'My Orders',
   tabBarIcon: ({ focused }) => (
@@ -62,6 +49,5 @@ OrderStack.navigationOptions = {
 
 export default createBottomTabNavigator({
   RestaurantStack,
-  CheckoutStack,
   OrderStack
 });

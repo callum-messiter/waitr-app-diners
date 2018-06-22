@@ -10,23 +10,17 @@ const initialState = {
 export default state = (state = initialState, action) => {
 	const p = action.payload;
 	switch(action.type) {
-
 		case actions.ADD_CART_ITEM:
 			var newTotal = parseFloat(state.totalPrice) + parseFloat(p.item.price);
-			const newCart = {
-				...state,
+			return newCart = {
 				items: [p.item, ...state.items],
-				totalPrice: newTotal.toFixed(2)
+				totalPrice: newTotal.toFixed(2),
+				restaurantId: p.restaurantId,
+				menuId: p.menuId
 			};
-			/* If first item, set metadata */
-			if(state.items.length === 0) {
-				newCart.restaurantId = p.restaurantId;
-				newCart.menuId = p.menuId
-			};
-			return newCart;
 
 		case actions.REMOVE_CART_ITEM:
-			const index = state.items.findIndex(i => i.itemId == p.item.itemId);
+			const index = state.items.findIndex(i => i.cartItemId == p.cartItemId);
 			if(index === -1) return state; /* If item not found, return current cart */
 			if(state.items.length === 1) return initialState; /* If final item, return default cart */
 			var newTotal = parseFloat(state.totalPrice) - parseFloat(p.price);
@@ -39,7 +33,7 @@ export default state = (state = initialState, action) => {
 				totalPrice: newTotal.toFixed(2)
 			};
 
-		case actions.RESET_CART: return initialState; break;
+		case actions.RESET_CART: return initialState;
 		default: return state;
 	}
 }

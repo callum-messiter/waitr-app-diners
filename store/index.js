@@ -6,10 +6,10 @@ import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import rootReducer from '../reducers'; /* The value from combineReducers */
 
 const persistConfig = {
- key: 'root',
- storage: storage,
- whitelist: ['user'],
- stateReconciler: autoMergeLevel2 /* See "Merge Process" section for details. */
+	key: 'root',
+	storage: storage,
+	whitelist: ['user', 'cart'],
+	stateReconciler: autoMergeLevel2 /* See "Merge Process" section for details. */
 };
 
 const pReducer = persistReducer(persistConfig, rootReducer);
