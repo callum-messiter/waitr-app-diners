@@ -20,7 +20,9 @@ class ItemListScreen extends React.Component {
       title: navigation.getParam('categoryName', 'Menu'),
       headerRight: ( 
         <CartButton
-          onPress={() => navigation.navigate('Checkout', {
+          restaurantId={navigation.getParam('restaurantId', null)}
+          onPress={() => navigation.navigate('Checkout', {  
+            restaurantId: navigation.getParam('restaurantId', null),
             restaurantName: navigation.getParam('restaurantName', 'Order Summary')
           })}
         /> 
@@ -40,6 +42,7 @@ class ItemListScreen extends React.Component {
       restaurantId: this.props.navigation.getParam('restaurantId', null),
       menuId: this.props.navigation.getParam('menuId', null)
     });
+    console.log(JSON.stringify(this.props.carts));
   }
 
   render() {
@@ -75,7 +78,7 @@ const styles = StyleSheet.create({
 const mapPropsToState = (state) => ({
   restaurantMenu: state.restaurants.menu,
   user: state.user,
-  cart: state.cart
+  carts: state.carts
 });
 
 export default connect(mapPropsToState, { addItemToCart })(ItemListScreen);

@@ -12,21 +12,27 @@ class CheckoutScreen extends React.Component {
   };
 
   render() {
-    var numItemsStr = this.props.cart.items.length + ' items';
-    if(this.props.cart.items.length === 1) {
+    /* Get the cart by restaurantId */
+    const cart = this.props.carts.find((cart) => {
+      return cart.restaurantId == this.props.navigation.getParam('restaurantId', null);
+    });
+    console.log(cart);
+    if(cart === undefined) return null;
+    var numItemsStr = cart.items.length + ' items';
+    if(cart.items.length === 1) {
       numItemsStr = numItemsStr.substring(0, numItemsStr.length - 1);
     }
     return (
       <View style={styles.container}>
         <Text h3 style={styles.cartSummary}>{this.props.navigation.getParam('restaurantName', null)}</Text>
-      	<Text h4 style={styles.cartSummary}>Total: £{this.props.cart.totalPrice} ({numItemsStr})</Text>
+      	<Text h4 style={styles.cartSummary}>Total: £{cart.totalPrice} ({numItemsStr})</Text>
         <Button
           backgroundColor='#1b4a96'
           title={"Pay Now"}
           onPress={() => alert('Pay')}
         />
         <FlatList
-          data={this.props.cart.items}
+          data={cart.items}
           keyExtractor={(item) => item.cartItemId}
           renderItem={({ item }) => (
             <ListItem
@@ -60,7 +66,7 @@ const styles = StyleSheet.create({
 });
 
 const mapPropsToState = (state) => ({
-  cart: state.cart
+  carts: state.carts
 });
 
 export default connect(mapPropsToState, {

@@ -12,8 +12,10 @@ class CategoryListScreen extends React.Component {
     return {
       title: navigation.getParam('restaurantName', 'Menu'),
       headerRight: ( 
-        <CartButton 
+        <CartButton
+          restaurantId={navigation.getParam('restaurantId', null)}
           onPress={() => navigation.navigate('Checkout', {
+            restaurantId: navigation.getParam('restaurantId', null),
             restaurantName: navigation.getParam('restaurantName', null)
           })}
         /> 

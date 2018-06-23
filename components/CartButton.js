@@ -10,10 +10,15 @@ class CartButton extends React.Component {
   }
 
   render() {
-    if(this.props.cart.items.length < 1) return null;
+    /* Get the cart for the given restaurant */
+    const cart = this.props.carts.find((cart) => {
+      return cart.restaurantId == this.props.restaurantId;
+    });
+    if (cart === undefined) return null;
+    if(cart.items.length < 1) return null;
     return (
       <Button
-        title={`£${this.props.cart.totalPrice} (${this.props.cart.items.length})`}
+        title={`£${cart.totalPrice} (${cart.items.length})`}
         onPress={this.props.onPress}
       />
     )
@@ -24,7 +29,7 @@ const styles = StyleSheet.create({
 });
 
 const mapPropsToState = (state) => ({
-  cart: state.cart,
+  carts: state.carts,
 });
 
 export default connect(mapPropsToState)(CartButton);
