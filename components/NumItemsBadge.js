@@ -22,14 +22,26 @@ class NumItemsBadge extends React.Component {
 
   render() {
     const num = this.countNumberOfCategoryItemsInCart();
-    if(num < 1) return null;
+    /* If none of the cart items belong to this category, don't show the badge */
+    if(num < 1) return (
+      <Icon name={'chevron-right'} onPress={this.props.onPress} /> 
+    );
     return (
-      <Badge value={num} />
+      <Badge containerStyle={styles.badgeContainer}>
+        <Text>{num}</Text>
+      </Badge>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  badgeContainer: {
+    width: 30,
+    backgroundColor: '#c2c8d1',
+    borderRadius: 0,
+    paddingLeft: 7,
+    paddingRight: 7
+  }
 });
 
 const mapPropsToState = (state) => ({

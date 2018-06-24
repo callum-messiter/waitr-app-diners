@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, FlatList, Button } from 'react-native';
-import { Text, ListItem, Icon } from 'react-native-elements';
+import { StyleSheet, View, FlatList } from 'react-native';
+import { Text, ListItem, Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 class CartButton extends React.Component {
 
@@ -18,6 +19,14 @@ class CartButton extends React.Component {
     if(cart.items.length < 1) return null;
     return (
       <Button
+        titleStyle={{ fontSize: 7 }}
+        buttonStyle={{
+          backgroundColor: "#2089dc",
+          borderColor: "transparent",
+          borderWidth: 0,
+          borderRadius: 5,
+          padding: 7
+        }}
         title={`£${cart.totalPrice} (${cart.items.length})`}
         onPress={this.props.onPress}
       />
@@ -26,6 +35,7 @@ class CartButton extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  fontSize: 5
 });
 
 const mapPropsToState = (state) => ({

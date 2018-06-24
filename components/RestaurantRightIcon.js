@@ -21,13 +21,16 @@ class RestaurantRightIcon extends React.Component {
       );
     } else {
       return (
-        <CartButton restaurantId={this.props.restaurantId} onPress={this.props.onPress} />
+        <CartButton style={styles.cartBtn} restaurantId={this.props.restaurantId} onPress={this.props.onPress} />
       );
     }
   }
 }
 
 const styles = StyleSheet.create({
+  cartBtn: {
+    fontSize: 7
+  }
 });
 
 const mapPropsToState = (state) => ({
