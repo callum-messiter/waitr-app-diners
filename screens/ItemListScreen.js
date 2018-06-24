@@ -33,14 +33,15 @@ class ItemListScreen extends React.Component {
   _addItemToCart(item) {
     this.props.addItemToCart({
       item: {
-        itemid: item.itemId,
+        itemId: item.itemId,
         cartItemId: shortId.generate(), /* Add unique ID */
+        categoryId: this.props.navigation.getParam('categoryId', null),
         name: item.name,
         description: item.description,
         price: item.price
       },
       restaurantId: this.props.navigation.getParam('restaurantId', null),
-      menuId: this.props.navigation.getParam('menuId', null)
+      menuId: this.props.navigation.getParam('menuId', null),
     });
   }
 

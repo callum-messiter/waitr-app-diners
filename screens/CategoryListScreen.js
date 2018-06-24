@@ -5,6 +5,7 @@ import { Text, ListItem } from 'react-native-elements';
 import { setRestaurantMenu } from '../actions';
 import { restaurant } from '../utilities/waitrApi';
 import CartButton from '../components/CartButton';
+import NumItemsBadge from '../components/NumItemsBadge';
 
 class CategoryListScreen extends React.Component {
   
@@ -38,6 +39,16 @@ class CategoryListScreen extends React.Component {
     });
   }
 
+  navigateToItemList(category) {
+    this.props.navigation.navigate('ItemList', {
+      categoryId: category.categoryId,
+      categoryName: category.name,
+      restaurantId: this.props.navigation.getParam('restaurantId', null),
+      restaurantName: this.props.navigation.getParam('restaurantName', null),
+      menuId: this.props.navigation.getParam('menuId', null)
+    });
+  }
+
   render() {
     return (
       <View>
@@ -47,15 +58,13 @@ class CategoryListScreen extends React.Component {
           renderItem={({ item: category }) => (
             <ListItem
               title={category.name}
-              onPress={() => {
-                this.props.navigation.navigate('ItemList', {
-                  categoryId: category.categoryId,
-                  categoryName: category.name,
-                  restaurantId: this.props.navigation.getParam('restaurantId', null),
-                  restaurantName: this.props.navigation.getParam('restaurantName', null),
-                  menuId: this.props.navigation.getParam('menuId', null)
-                });
-              }}
+              rightIcon={
+                <NumItemsBadge
+                  restaurantId={this.props.navigation.getParam('restaurantId', null)} 
+                  categoryId={category.categoryId}
+                />
+              }
+              onPress={() => { this.navigateToItemList(category) }}
             />
           )}
         />
@@ -87,7 +96,8 @@ const styles = StyleSheet.create({
 const mapPropsToState = (state) => ({
   restaurants: state.restaurants.list,
   restaurantMenu: state.restaurants.menu,
-  user: state.user
+  user: state.user,
+  carts: state.carts
 });
 
 export default connect(mapPropsToState, { setRestaurantMenu })(CategoryListScreen);
