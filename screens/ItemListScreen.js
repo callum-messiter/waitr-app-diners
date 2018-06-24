@@ -42,7 +42,6 @@ class ItemListScreen extends React.Component {
       restaurantId: this.props.navigation.getParam('restaurantId', null),
       menuId: this.props.navigation.getParam('menuId', null)
     });
-    console.log(JSON.stringify(this.props.carts));
   }
 
   render() {
@@ -61,7 +60,7 @@ class ItemListScreen extends React.Component {
               rightIcon={
                 <Icon
                   name={'add'}
-                  onPress={ () => { this._addItemToCart(item)} }
+                  onPress={ () => { this._addItemToCart(item) } }
                 />
               }
             />

@@ -5,23 +5,38 @@ import { Text, ListItem, Icon, Button } from 'react-native-elements';
 import { addItemToCart, removeItemFromCart, resetCart } from '../actions';
 
 class CheckoutScreen extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    /* Replace instance method with a new 'bound' version */
+    this._removeItemFromCart = this._removeItemFromCart.bind(this);
+  }
+
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Cart',
     };
   };
 
+  _removeItemFromCart(item) {
+    const restaurantId = this.props.navigation.getParam('restaurantId', null);
+    this.props.removeItemFromCart({
+      item: item, 
+      restaurantId: restaurantId
+    });
+  }
+
   render() {
     /* Get the cart by restaurantId */
     const cart = this.props.carts.find((cart) => {
       return cart.restaurantId == this.props.navigation.getParam('restaurantId', null);
     });
-    console.log(cart);
     if(cart === undefined) return null;
     var numItemsStr = cart.items.length + ' items';
     if(cart.items.length === 1) {
       numItemsStr = numItemsStr.substring(0, numItemsStr.length - 1);
     }
+
     return (
       <View style={styles.container}>
         <Text h3 style={styles.cartSummary}>{this.props.navigation.getParam('restaurantName', null)}</Text>
@@ -40,7 +55,7 @@ class CheckoutScreen extends React.Component {
               rightIcon={
                 <Icon
                   name={'remove'}
-                  onPress={ () => {this.props.removeItemFromCart(item)} }
+                  onPress={ () => { this._removeItemFromCart(item) } }
                 />
               }
             />

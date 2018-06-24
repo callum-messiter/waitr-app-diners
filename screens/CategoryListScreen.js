@@ -29,10 +29,6 @@ class CategoryListScreen extends React.Component {
     this.api_getRestaurantMenu(token, menuId);
   }
 
-  componentDidMount() {
-    this.props.navigation.setParams({ increaseCount: this._increaseCount });
-  }
-
   api_getRestaurantMenu(token, menuId) {
     return restaurant.getMenu(token, menuId)
     .then((res) => {
