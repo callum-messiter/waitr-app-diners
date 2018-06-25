@@ -6,13 +6,12 @@ import { addItemToCart } from '../actions';
 import { restaurant } from '../utilities/waitrApi';
 import shortId from 'shortid';
 import CartButton from '../components/CartButton';
+import CartItemManager from '../components/CartItemManager';
 
 class ItemListScreen extends React.Component {
   
   constructor(props) {
     super(props);
-    /* Replace instance method with a new 'bound' version */
-    this._addItemToCart = this._addItemToCart.bind(this);
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -30,21 +29,6 @@ class ItemListScreen extends React.Component {
     };
   };
 
-  _addItemToCart(item) {
-    this.props.addItemToCart({
-      item: {
-        itemId: item.itemId,
-        cartItemId: shortId.generate(), /* Add unique ID */
-        categoryId: this.props.navigation.getParam('categoryId', null),
-        name: item.name,
-        description: item.description,
-        price: item.price
-      },
-      restaurantId: this.props.navigation.getParam('restaurantId', null),
-      menuId: this.props.navigation.getParam('menuId', null),
-    });
-  }
-
   render() {
     const items = this.props.restaurantMenu.categories.find((c) => {
       return c.categoryId == this.props.navigation.getParam('categoryId', null);
@@ -59,9 +43,11 @@ class ItemListScreen extends React.Component {
             <ListItem
               title={item.name}
               rightIcon={
-                <Icon
-                  name={'add'}
-                  onPress={ () => { this._addItemToCart(item) } }
+                <CartItemManager
+                  item={item}
+                  categoryId={this.props.navigation.getParam('categoryId', null)}
+                  menuId={this.props.navigation.getParam('menuId', null)}
+                  restaurantId={this.props.navigation.getParam('restaurantId', null)}
                 />
               }
             />

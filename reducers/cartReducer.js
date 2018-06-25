@@ -58,9 +58,11 @@ const updateCartState = {
 	
 	removeItem: (carts, data) => {
 		const cartIndex = carts.findIndex(cart => cart.restaurantId == data.restaurantId);
+		console.log('cartIndex: ' + cartIndex);
 		if(cartIndex === -1) return carts;
 		const cart = carts[cartIndex], item = data.item;
 		const itemIndex = cart.items.findIndex(i => i.cartItemId == item.cartItemId);
+		console.log('itemIndex: ' + itemIndex);
 		if(itemIndex === -1) return carts;
 		
 		/* If removing the cart's only item, just return the carts state without this cart */

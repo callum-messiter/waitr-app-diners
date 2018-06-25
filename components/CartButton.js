@@ -35,7 +35,6 @@ class CartButton extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  fontSize: 5
 });
 
 const mapPropsToState = (state) => ({
