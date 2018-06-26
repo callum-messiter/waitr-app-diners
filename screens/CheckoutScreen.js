@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, ListItem, Icon, Button } from 'react-native-elements';
 import { addItemToCart, removeItemFromCart, resetCart } from '../actions';
+import * as Cart from '../utilities/CartHelper';
 
 class CheckoutScreen extends React.Component {
   
@@ -26,28 +27,33 @@ class CheckoutScreen extends React.Component {
     });
   }
 
-  render() {
-    /* Get the cart by restaurantId */
-    const cart = this.props.carts.find((cart) => {
-      return cart.restaurantId == this.props.navigation.getParam('restaurantId', null);
-    });
-    if(cart === undefined) return null;
+  _generateNumItemsString(cart) {
     var numItemsStr = cart.items.length + ' items';
+    /* If there is only one item, we need 'item' instead of 'items' */
     if(cart.items.length === 1) {
       numItemsStr = numItemsStr.substring(0, numItemsStr.length - 1);
     }
+    return `Total: £${cart.totalPrice} (${numItemsStr})`;
+  }
 
+  render() {
+    const restaurantId = this.props.navigation.getParam('restaurantId', null);
+    const restaurantName = this.props.navigation.getParam('restaurantName', null);
+    const cart = Cart.getBreakdown(this.props.carts, restaurantId);
+    if(cart.numItems < 1) return null;
+    const cartBreakdownStr = this._generateNumItemsString(cart.data);
+    
     return (
       <View style={styles.container}>
-        <Text h3 style={styles.cartSummary}>{this.props.navigation.getParam('restaurantName', null)}</Text>
-      	<Text h4 style={styles.cartSummary}>Total: £{cart.totalPrice} ({numItemsStr})</Text>
+        <Text h3 style={styles.cartSummary}>{restaurantName}</Text>
+      	<Text h4 style={styles.cartSummary}>{cartBreakdownStr}</Text>
         <Button
           backgroundColor='#1b4a96'
           title={"Pay Now"}
           onPress={() => alert('Pay')}
         />
         <FlatList
-          data={cart.items}
+          data={cart.data.items}
           keyExtractor={(item) => item.cartItemId}
           renderItem={({ item }) => (
             <ListItem
@@ -55,7 +61,7 @@ class CheckoutScreen extends React.Component {
               rightIcon={
                 <Icon
                   name={'remove'}
-                  onPress={ () => { this._removeItemFromCart(item) } }
+                  onPress={() => this._removeItemFromCart(item)}
                 />
               }
             />

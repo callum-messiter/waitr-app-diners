@@ -1,9 +1,9 @@
 import React from 'react';
 import { createSwitchNavigator } from 'react-navigation';
-import LoginComponent from '../components/Login';
+import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 
 export default createSwitchNavigator({
-  Login: LoginComponent,
+  Login: LoginScreen,
   Signup: SignupScreen
 });

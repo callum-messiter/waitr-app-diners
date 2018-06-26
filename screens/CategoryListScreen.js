@@ -3,12 +3,12 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, ListItem } from 'react-native-elements';
 import { setRestaurantMenu } from '../actions';
-import { restaurant } from '../utilities/waitrApi';
+import { Restaurant } from '../utilities/waitrApi';
 import CartButton from '../components/CartButton';
 import NumItemsBadge from '../components/NumItemsBadge';
 
 class CategoryListScreen extends React.Component {
-  
+
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam('restaurantName', 'Menu'),
@@ -27,13 +27,14 @@ class CategoryListScreen extends React.Component {
   };
 
   componentWillMount() {
-    const token = this.props.user.token;
-    const menuId = this.props.navigation.getParam('menuId', null);
-    this.api_getRestaurantMenu(token, menuId);
+    this._getRestaurantMenuFromBackend(
+      this.props.user.token,
+      this.props.navigation.getParam('menuId', null)
+    );
   }
 
-  api_getRestaurantMenu(token, menuId) {
-    return restaurant.getMenu(token, menuId)
+  _getRestaurantMenuFromBackend(token, menuId) {
+    return Restaurant.getMenu(token, menuId)
     .then((res) => {
       if(res.hasOwnProperty('data')) return this.props.setRestaurantMenu(res.data.data);
     }).catch((err) => {
@@ -41,7 +42,7 @@ class CategoryListScreen extends React.Component {
     });
   }
 
-  navigateToItemList(category) {
+  _navigateToItemList(category) {
     this.props.navigation.navigate('ItemList', {
       categoryId: category.categoryId,
       categoryName: category.name,
@@ -52,21 +53,21 @@ class CategoryListScreen extends React.Component {
   }
 
   render() {
+    const menu = this.props.restaurantMenu;
+    const restaurantId = this.props.navigation.getParam('restaurantId', null);
+    
     return (
       <View>
         <FlatList
-          data={this.props.restaurantMenu.categories}
+          data={menu.categories}
           keyExtractor={category => category.categoryId}
           renderItem={({ item: category }) => (
             <ListItem
               title={category.name}
               rightIcon={
-                <NumItemsBadge
-                  restaurantId={this.props.navigation.getParam('restaurantId', null)} 
-                  categoryId={category.categoryId}
-                />
+                <NumItemsBadge restaurantId={restaurantId} categoryId={category.categoryId}/>
               }
-              onPress={() => { this.navigateToItemList(category) }}
+              onPress={() => this._navigateToItemList(category)}
             />
           )}
         />

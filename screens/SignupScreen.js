@@ -11,11 +11,11 @@ class SignupScreen extends React.Component {
   constructor(props) {
     super(props);
     /* Replace instance method with a new 'bound' version */
-    this.api_registerUser = this.api_registerUser.bind(this);
+    this.registerUserOnBackend = this.registerUserOnBackend.bind(this);
     this.validateAllFields = this.validateAllFields.bind(this);
   }
 
-  api_registerUser() {
+  registerUserOnBackend() {
     const params = {
       firstName: this.firstName, 
       lastName: this.lastName, 
@@ -90,13 +90,11 @@ class SignupScreen extends React.Component {
             style={styles.input}
             onChangeText={(text) => this.confPassword = text}
           />
-          <Button title='Signup' color='#fff' onPress={this.api_registerUser} />
+          <Button title='Signup' color='#fff' onPress={this.registerUserOnBackend} />
           <Button 
             title='Go to login'
             color='#fff' 
-            onPress={() => {
-              this.props.navigation.navigate('Login');
-            }}
+            onPress={() => this.props.navigation.navigate('Login')}
           />
         </View>
         

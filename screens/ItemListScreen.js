@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, ListItem, Icon, Button } from 'react-native-elements';
 import { addItemToCart } from '../actions';
-import { restaurant } from '../utilities/waitrApi';
 import shortId from 'shortid';
 import CartButton from '../components/CartButton';
 import CartItemManager from '../components/CartItemManager';
@@ -29,11 +28,22 @@ class ItemListScreen extends React.Component {
     };
   };
 
-  render() {
-    const items = this.props.restaurantMenu.categories.find((c) => {
+  _getCategoryItems() {
+    const category = this.props.restaurantMenu.categories.find((c) => {
       return c.categoryId == this.props.navigation.getParam('categoryId', null);
-    }).items;
+    });
+    /* These should not arise; log errors if they do */
+    if(category === undefined) return null;
+    if(!category.hasOwnProperty('items')) return null;
+    if(category.items.length < 1) return null;
+    return category.items;
+  }
 
+  render() {
+    const nav = this.props.navigation;
+    const items = this._getCategoryItems();
+    if(items === null) return null; /* Show an error page */
+    
     return (
       <View>
         <FlatList
@@ -45,9 +55,9 @@ class ItemListScreen extends React.Component {
               rightIcon={
                 <CartItemManager
                   item={item}
-                  categoryId={this.props.navigation.getParam('categoryId', null)}
-                  menuId={this.props.navigation.getParam('menuId', null)}
-                  restaurantId={this.props.navigation.getParam('restaurantId', null)}
+                  restaurantId={nav.getParam('restaurantId', null)}
+                  menuId={nav.getParam('menuId', null)}
+                  categoryId={nav.getParam('categoryId', null)}
                 />
               }
             />

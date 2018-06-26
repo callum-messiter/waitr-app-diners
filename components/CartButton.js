@@ -10,24 +10,27 @@ class CartButton extends React.Component {
     super(props);
   }
 
-  render() {
+  getCartBreakdown() {
+    var cartBreakdown = { numItems: 0, data: {} };
     /* Get the cart for the given restaurant */
     const cart = this.props.carts.find((cart) => {
       return cart.restaurantId == this.props.restaurantId;
     });
-    if (cart === undefined) return null;
-    if(cart.items.length < 1) return null;
+    if (cart !== undefined) {
+      cartBreakdown.numItems = cart.items.length;
+      cartBreakdown.data = cart; 
+    }
+    return cartBreakdown;
+  }
+
+  render() {
+    const cart = this.getCartBreakdown();
+    if(cart.numItems < 1) return null;
     return (
       <Button
-        titleStyle={{ fontSize: 7 }}
-        buttonStyle={{
-          backgroundColor: "#2089dc",
-          borderColor: "transparent",
-          borderWidth: 0,
-          borderRadius: 5,
-          padding: 7
-        }}
-        title={`£${cart.totalPrice} (${cart.items.length})`}
+        titleStyle={styles.btnTitle}
+        buttonStyle={styles.cartBtn}
+        title={`£${cart.data.totalPrice} (${cart.data.items.length})`}
         onPress={this.props.onPress}
       />
     )
@@ -35,6 +38,16 @@ class CartButton extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  cartBtn: {
+    backgroundColor: "#2089dc",
+    borderColor: "transparent",
+    borderWidth: 0,
+    borderRadius: 5,
+    padding: 7
+  },
+  btnTitle: {
+    fontSize: 7
+  }
 });
 
 const mapPropsToState = (state) => ({

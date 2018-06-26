@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, Text, Button, FlatList } from 'react-native';
 import { List, ListItem } from 'react-native-elements';
 import { setOrders, deauthenticateUser } from '../actions';
-import { order } from '../utilities/waitrApi';
+import { Order } from '../utilities/waitrApi';
 import moment from 'moment';
 
 class MyOrdersScreen extends React.Component {
@@ -17,22 +17,28 @@ class MyOrdersScreen extends React.Component {
   };
 
   componentWillMount() {
-    this.api_getOrderHistoryForUser();
+    this._getUserOrderHistoryFromBackend();
   }
 
-  api_getOrderHistoryForUser() {
-    return order.getList(this.props.user.token)
+  _getUserOrderHistoryFromBackend() {
+    return Order.getList(this.props.user.token)
     .then((res) => {
-      orders = this.addTimeAgoPropToEachOrder(res.data); /* e.g. timeAgo: '2 hours ago' */
+      orders = this._addTimeAgoPropToEachOrder(res.data); /* e.g. timeAgo: '2 hours ago' */
       return this.props.setOrders(orders);
     }).catch((err) => {
       console.log(err);
     });
   }
 
-  addTimeAgoPropToEachOrder(orders) {
+  _addTimeAgoPropToEachOrder(orders) {
     for(var o of orders) { o.timeAgo = moment(o.time).utc().fromNow(); }
     return orders;
+  }
+
+  _navigateToOrderDetailsScreen(order) {
+    this.props.navigation.navigate('OrderDetails', {
+      orderId: order.orderId
+    });
   }
 
   render() {
@@ -40,7 +46,7 @@ class MyOrdersScreen extends React.Component {
       <View>
         <Button 
           title='Logout'
-          onPress={ () => {this.props.deauthenticateUser();} }
+          onPress={() => this.props.deauthenticateUser()}
         />
         <FlatList
           data={this.props.orders}
@@ -49,11 +55,7 @@ class MyOrdersScreen extends React.Component {
             <ListItem
               title={`${order.restaurantName} | £${parseFloat(order.price).toFixed(2)}`}
               subtitle={order.timeAgo}
-              onPress={() => {
-                this.props.navigation.navigate('OrderDetails', {
-                  orderId: order.orderId
-                });
-              }}
+              onPress={() => this._navigateToOrderDetailsScreen(order)}
             />
           )}
         />

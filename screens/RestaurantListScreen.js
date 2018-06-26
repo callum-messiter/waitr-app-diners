@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, ListItem, Icon } from 'react-native-elements';
 import { setRestaurants } from '../actions';
-import { restaurant } from '../utilities/waitrApi';
+import { Restaurant } from '../utilities/waitrApi';
 import CartButton from '../components/CartButton';
 import RestaurantRightIcon from '../components/RestaurantRightIcon';
 
@@ -16,15 +16,23 @@ class RestaurantListScreen extends React.Component {
   };
 
   componentWillMount() {
-    this.api_getListOfRestaurants();
+    this._getRestaurantsListFromBackend();
   }
 
-  api_getListOfRestaurants() {
-    return restaurant.getList(this.props.user.token)
+  _getRestaurantsListFromBackend() {
+    return Restaurant.getList(this.props.user.token)
     .then((res) => {
       if(res.hasOwnProperty('data')) return this.props.setRestaurants(res.data.data);
     }).catch((err) => {
       console.log(err);
+    });
+  }
+
+  navigateToCategoryList(restaurant) {
+    this.props.navigation.navigate('CategoryList', {
+      restaurantId: restaurant.restaurantId,
+      restaurantName: restaurant.name,
+      menuId: restaurant.menus[0].menuId, /* For now the restaurant has just one menu */
     });
   }
 
@@ -37,25 +45,13 @@ class RestaurantListScreen extends React.Component {
           renderItem={({ item: restaurant }) => (
             <ListItem
               title={restaurant.name}
+              onPress={() => this.navigateToCategoryList(restaurant)}
               rightIcon={
                 <RestaurantRightIcon 
                   restaurantId={restaurant.restaurantId}
-                  onPress={() => {
-                    this.props.navigation.navigate('CategoryList', {
-                      restaurantId: restaurant.restaurantId,
-                      restaurantName: restaurant.name,
-                      menuId: restaurant.menus[0].menuId, /* For now the restaurant has just one menu */
-                    });
-                  }} 
+                  onPress={() => this.navigateToCategoryList(restaurant)}
                 />
               }
-              onPress={() => {
-                this.props.navigation.navigate('CategoryList', {
-                  restaurantId: restaurant.restaurantId,
-                  restaurantName: restaurant.name,
-                  menuId: restaurant.menus[0].menuId, /* For now the restaurant has just one menu */
-                });
-              }}
             />
           )}
         />

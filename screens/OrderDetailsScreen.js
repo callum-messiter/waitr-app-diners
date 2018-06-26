@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Image, Text, TextInput } from 'react-native';
-import { order } from '../utilities/waitrApi';
+import { Order } from '../utilities/waitrApi';
 
 class OrderDetailsScreen extends React.Component {
 
@@ -14,13 +14,14 @@ class OrderDetailsScreen extends React.Component {
   };
 
   componentWillMount() {
-    const token = this.props.user.token;
-    const orderId = this.props.navigation.getParam('orderId', null);
-    this.api_getOrderDetails(token, orderId);
+    this._getOrderDetailsFromBackend(
+      this.props.user.token,
+      this.props.navigation.getParam('orderId', null)
+    );
   }
 
-  api_getOrderDetails(token, orderId) {
-    return order.get(token, orderId)
+  _getOrderDetailsFromBackend(token, orderId) {
+    return Order.get(token, orderId)
     .then((res) => {
       /* TODO: the order state should have two props: list[] and focus{}. Here we dispatch the setFocusOrder action */
       console.log(res);

@@ -20,7 +20,7 @@ function callWaitrApi(method, path, token=null, params={}) {
     });
 };
 
-export const user = {
+export const User = {
 	login(email, password) {
 		const queryString = '?email=' + email + '&password=' + password;
 		const path = 'auth/login/d' + queryString;
@@ -35,7 +35,7 @@ export const user = {
 }
 
 /* TODO: a single API path should return all this data together */
-export const restaurant = {
+export const Restaurant = {
 	getList(token) {
 		return callWaitrApi('get', 'restaurant', token);
 	},
@@ -49,7 +49,7 @@ export const restaurant = {
 	}
 }
 
-export const order = {
+export const Order = {
 	getList(token) {
 		return callWaitrApi('get', 'order/history', token);
 	},

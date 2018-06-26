@@ -9,7 +9,6 @@ import ItemListScreen from '../screens/ItemListScreen';
 import MyOrdersScreen from '../screens/MyOrdersScreen';
 import OrderDetailsScreen from '../screens/OrderDetailsScreen';
 import CheckoutScreen from '../screens/CheckoutScreen';
-import LoginComponent from '../components/Login';
 
 const RestaurantStack = createStackNavigator({
   RestaurantList: RestaurantListScreen,

@@ -1,14 +1,36 @@
 import React from 'react';
-import { StyleSheet, View, Image, Text, TextInput } from 'react-native';
+import { connect } from 'react-redux';
+import { StyleSheet, View, Image, Text, TextInput, Button } from 'react-native';
+import { setUser } from '../actions';
+import { User } from '../utilities/waitrApi';
 
-export default class Login extends React.Component {
+class LoginScreen extends React.Component {
+
+  constructor(props) {
+    super(props);
+    /* Replace instance method with a new 'bound' version */
+    this._logUserInOnBackend = this._logUserInOnBackend.bind(this);
+  }
+  
+  _logUserInOnBackend() {
+    if(this.email == undefined || this.password == undefined) return;
+
+    User.login(this.email, this.password)
+    .then((res) => {
+      res.data.data.user.isAuth = true;
+      this.props.setUser(res.data.data.user);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
 
         <View style={styles.logoContainer}>
           <Image
-            style={styles.logo} 
+            style={styles.logo}
             source={require('../assets/images/logo.png')}
           />
           <Text style={styles.tagline}>Let's eat!</Text>
@@ -16,12 +38,20 @@ export default class Login extends React.Component {
 
         <View style={styles.formContainer}>
           <TextInput
-            placeholder="Enter your email" 
+            placeholder='Enter your email'
             style={styles.input}
+            onChangeText={(text) => this.email = text}
           />
           <TextInput
-            placeholder="Enter your password" 
+            placeholder='Enter your password' 
             style={styles.input}
+            onChangeText={(text) => this.password = text}
+          />
+          <Button title='Login' color='#fff' onPress={this._logUserInOnBackend} />
+          <Button 
+            title='Go to signup'
+            color='#fff' 
+            onPress={() => this.props.navigation.navigate('Signup')}
           />
         </View>
         
@@ -58,5 +88,14 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: '#fff',
     marginBottom: 20
+  },
+  signupLink: {
+    color: '#fff'
   }
 });
+
+const mapStoreToProps = state => ({
+  user: state.user
+});
+
+export default connect(mapStoreToProps, { setUser })(LoginScreen);
