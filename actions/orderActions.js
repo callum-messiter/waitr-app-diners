@@ -6,3 +6,10 @@ export const setOrders = (payload) => {
 		payload: payload
 	};
 };
+
+export const updateOrderStatus = (order) => {
+	return {
+		type: actions.UPDATE_ORDER_STATUS,
+		payload: payload
+	}
+}

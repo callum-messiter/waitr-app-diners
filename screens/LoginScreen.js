@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, Image, Text, TextInput, Button } from 'react-native';
 import { setUser } from '../actions';
 import { User } from '../utilities/waitrApi';
+import Websockets from '../utilities/Websockets';
 
 class LoginScreen extends React.Component {
 
@@ -19,6 +20,7 @@ class LoginScreen extends React.Component {
     .then((res) => {
       res.data.data.user.isAuth = true;
       this.props.setUser(res.data.data.user);
+      Websockets.init();
     }).catch((err) => {
       console.log(err);
     });

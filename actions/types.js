@@ -10,7 +10,8 @@ export const restaurantActions = {
 };
 
 export const orderActions = {
-	SET_ORDERS: 'SET_ORDERS'
+	SET_ORDERS: 'SET_ORDERS',
+	UPDATE_ORDER_STATUS: 'UPDATE_ORDER_STATUS'
 };
 
 export const cartActions = {

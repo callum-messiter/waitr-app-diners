@@ -2,12 +2,13 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import RootNavigation from '../navigation/RootNavigation';
 import { connect } from 'react-redux';
+import Websockets from '../utilities/Websockets';
 
 class RootComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log(this.props.user);
+    Websockets.init();
   }
 
   render() {

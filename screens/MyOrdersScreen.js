@@ -5,6 +5,7 @@ import { List, ListItem } from 'react-native-elements';
 import { setOrders, deauthenticateUser } from '../actions';
 import { Order } from '../utilities/waitrApi';
 import moment from 'moment';
+import Websockets from '../utilities/Websockets';
 
 class MyOrdersScreen extends React.Component {
 
@@ -24,6 +25,7 @@ class MyOrdersScreen extends React.Component {
     return Order.getList(this.props.user.token)
     .then((res) => {
       orders = this._addTimeAgoPropToEachOrder(res.data); /* e.g. timeAgo: '2 hours ago' */
+      console.log(orders);
       return this.props.setOrders(orders);
     }).catch((err) => {
       console.log(err);
@@ -41,12 +43,17 @@ class MyOrdersScreen extends React.Component {
     });
   }
 
+  _logUserOut() {
+    this.props.deauthenticateUser();
+    Websockets.disconnectFromServer();
+  }
+
   render() {
     return (
       <View>
         <Button 
           title='Logout'
-          onPress={() => this.props.deauthenticateUser()}
+          onPress={() => this._logUserOut()}
         />
         <FlatList
           data={this.props.orders}
