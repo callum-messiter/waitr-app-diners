@@ -22,7 +22,9 @@
     "redux": "^4.0.0",
     "redux-persist": "^5.10.0",
     "shortid": "^2.2.8",
+    "socket.io-client": "^2.1.1",
     "tcomb-form-native": "^0.6.13",
+    "tipsi-stripe": "^5.2.3",
     "underscore": "^1.9.1"
   },
   "devDependencies": {

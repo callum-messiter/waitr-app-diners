@@ -28,7 +28,7 @@ class RestaurantListScreen extends React.Component {
     });
   }
 
-  navigateToCategoryList(restaurant) {
+  _navigateToCategoryList(restaurant) {
     this.props.navigation.navigate('CategoryList', {
       restaurantId: restaurant.restaurantId,
       restaurantName: restaurant.name,
@@ -45,11 +45,11 @@ class RestaurantListScreen extends React.Component {
           renderItem={({ item: restaurant }) => (
             <ListItem
               title={restaurant.name}
-              onPress={() => this.navigateToCategoryList(restaurant)}
+              onPress={() => this._navigateToCategoryList(restaurant)}
               rightIcon={
                 <RestaurantRightIcon 
                   restaurantId={restaurant.restaurantId}
-                  onPress={() => this.navigateToCategoryList(restaurant)}
+                  onPress={() => this._navigateToCategoryList(restaurant)}
                 />
               }
             />
