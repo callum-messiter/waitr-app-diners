@@ -52,6 +52,7 @@ class ItemListScreen extends React.Component {
           renderItem={({ item }) => (
             <ListItem
               title={item.name}
+              subtitle={`£${parseFloat(item.price).toFixed(2)}`}
               rightIcon={
                 <CartItemManager
                   item={item}

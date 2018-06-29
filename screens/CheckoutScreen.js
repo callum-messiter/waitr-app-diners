@@ -45,7 +45,7 @@ class CheckoutScreen extends React.Component {
     
     return (
       <View style={styles.container}>
-        <Text h3 style={styles.cartSummary}>{restaurantName}</Text>
+        <Text h4 style={styles.cartSummary}>{restaurantName} - Table #{cart.data.tableNo}</Text>
       	<Text h4 style={styles.cartSummary}>{cartBreakdownStr}</Text>
         <Button
           backgroundColor='#1b4a96'

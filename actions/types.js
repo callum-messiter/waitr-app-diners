@@ -15,7 +15,9 @@ export const orderActions = {
 };
 
 export const cartActions = {
+	CREATE_NEW_CART: 'CREATE_NEW_CART',
 	ADD_CART_ITEM: 'ADD_CART_ITEM',
 	REMOVE_CART_ITEM: 'REMOVE_CART_ITEM',
+	UPDATE_CART_TABLE_NO: 'UPDATE_CART_TABLE_NO',
 	RESET_CART: 'RESET_CART'
 }

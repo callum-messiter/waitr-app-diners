@@ -37,5 +37,6 @@ export const errors = {
 	firstNameLength: 'The first name value must be between 1 and 100 characters.',
 	lastNameLength: 'The last name value must be between 1 and 100 characters.',
 	passLength: 'Passwords must be between 6 and 100 characters.',
-	passMismatch: 'Please ensure your passwords match.'
+	passMismatch: 'Please ensure your passwords match.',
+	invalidTableNumber: 'Please enter a valid table number.'
 }

@@ -25,7 +25,6 @@ class MyOrdersScreen extends React.Component {
     return Order.getList(this.props.user.token)
     .then((res) => {
       orders = this._addTimeAgoPropToEachOrder(res.data); /* e.g. timeAgo: '2 hours ago' */
-      console.log(orders);
       return this.props.setOrders(orders);
     }).catch((err) => {
       console.log(err);

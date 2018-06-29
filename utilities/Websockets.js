@@ -1,25 +1,48 @@
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
 import { websocketsBaseUrl } from '../config';
-import { orderActions as actions } from '../actions/types';
+import { updateOrderStatus } from '../actions';
 import { store } from '../store';
-let state = store.getState();
 
 export default class Websockets {
 
+	static events = {
+		inbound: {
+			orderStatusUpdated: 'orderStatusUpdated'
+		},
+		outbound: {
+			newOrder: 'newOrder',
+			userJoinedTable: 'userJoinedTable',
+			userLeftTable: 'userLeftTable'
+		}
+	};
+
+	static orderStatuses = {
+		sentToServer: 50,
+		receivedByServer: 100,
+		sentToKitchen: 200,
+		receivedByKitchen: 300,
+		acceptedByKitchen: 400,
+		paymentSuccessful: 500,
+		paymentFailed: 998,
+		rejectedByKitchen: 999,
+		enRouteToCustomer: 1000
+	};
+
 	/* On init, connect to the server and add all event listeners */
 	static init() {
-		this.state = store.getState();
-		if(!this.state.user.isAuth) return;
-
-		const queryString = `?customerId=${this.state.user.userId}`;
-		/* TODO: if cart is not empty, append tableData */
-		this.socket = io(websocketsBaseUrl + queryString);
+		this.state = store.getState(); /* Bind state to class */
+		const u = this.state.user;
+		if(!u.isAuth) return;
+		const queryString = this.buildConnQueryString(u.userId);
+		this.socket = io(websocketsBaseUrl + queryString); /* Connect to server */
+		
+		/* Add event listeners */
+		this.listenForOrderStatusUpdates();
 		this.handleConnection();
 		this.handleDisconnection();
-		this.listenForOrderStatusUpdates();
 		/* TODO: Set websockets state as connected */
-	}
+	};
 
 	static handleConnection() {
 		this.socket.on('connect', () => {
@@ -27,7 +50,7 @@ export default class Websockets {
 			console.log('Connected: ' + this.socket.connected);
 			/* TODO: Set websockets state as connected */
 		});
-	}
+	};
 
 	static handleDisconnection() {
 		this.socket.on('disconnect', () => {
@@ -35,22 +58,41 @@ export default class Websockets {
 			console.log('Connected: ' + this.socket.connected);
 			/* TODO: Set websockets state as disconnected */
 		});
-	}
+	};
 
 	static listenForOrderStatusUpdates() {
-		this.socket.on('orderStatusUpdated', (payload) => {
-			store.dispatch(
-				actions.updateOrderStatus(payload)
-			);
+		const orderStatusUpdated = this.events.inbound.orderStatusUpdated;
+		this.socket.on(orderStatusUpdated, (payload) => {
+			console.log('Order status update: ' + payload)
+			store.dispatch( updateOrderStatus(payload) );
+			/* TODO: push notification */
 		});
-	}
+	};
 
 	static emitMessage(type, payload) {
 		this.socket.emit(type, payload);
-	}
+	};
 
 	static disconnectFromServer() {
 		this.socket.disconnect();
+	};
+
+	static buildConnQueryString(userId) {
+		const queryString = `?customerId=${userId}`;
+		/* TODO: if cart is not empty, append tableData */
+		return queryString;
+	};
+
+	static sendTableUpdateToServer(eventType, data) {
+	    this.emitMessage(eventType, {
+			headers: {
+				token: data.token
+			},
+			table: {
+				restaurantId: data.restaurantId,
+				customerId: data.userId,
+				tableNo: data.tableNo
+			}
+	    });
 	}
 }
-

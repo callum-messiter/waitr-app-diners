@@ -27,7 +27,7 @@ class SignupScreen extends React.Component {
     if(allFieldsValid !== true) {
       const error = allFieldsValid;
       /* TODO: display flash message */
-      console.log(error);
+      return console.log(error);
     }
     
     user.signup(params, this.props.user.token)

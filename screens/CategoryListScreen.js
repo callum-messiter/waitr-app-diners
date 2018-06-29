@@ -4,8 +4,10 @@ import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, ListItem } from 'react-native-elements';
 import { setRestaurantMenu } from '../actions';
 import { Restaurant } from '../utilities/waitrApi';
+import { getBreakdown as getCartBreakdown } from '../utilities/CartHelper';
 import CartButton from '../components/CartButton';
 import NumItemsBadge from '../components/NumItemsBadge';
+import TableNumberFooter from '../components/TableNumberFooter';
 
 class CategoryListScreen extends React.Component {
 
@@ -26,7 +28,7 @@ class CategoryListScreen extends React.Component {
     };
   };
 
-  componentWillMount() {
+  componentWillMount() { 
     this._getRestaurantMenuFromBackend(
       this.props.user.token,
       this.props.navigation.getParam('menuId', null)
@@ -43,24 +45,33 @@ class CategoryListScreen extends React.Component {
   }
 
   _navigateToItemList(category) {
-    this.props.navigation.navigate('ItemList', {
+    const nav = this.props.navigation;
+    nav.navigate('ItemList', {
+      restaurantId: nav.getParam('restaurantId', null),
+      restaurantName: nav.getParam('restaurantName', null),
+      menuId: nav.getParam('menuId', null),
       categoryId: category.categoryId,
-      categoryName: category.name,
-      restaurantId: this.props.navigation.getParam('restaurantId', null),
-      restaurantName: this.props.navigation.getParam('restaurantName', null),
-      menuId: this.props.navigation.getParam('menuId', null)
+      categoryName: category.name
     });
   }
 
   render() {
     const menu = this.props.restaurantMenu;
     const restaurantId = this.props.navigation.getParam('restaurantId', null);
-    
+    const restaurantName = this.props.navigation.getParam('restaurantName', null);
+    const tableNo = getCartBreakdown(this.props.carts, restaurantId).data.tableNo;
+
     return (
       <View>
         <FlatList
           data={menu.categories}
           keyExtractor={category => category.categoryId}
+          ListFooterComponent={
+            <TableNumberFooter 
+              restaurantId={restaurantId}
+              restaurantName={restaurantName}
+            />
+          }
           renderItem={({ item: category }) => (
             <ListItem
               title={category.name}
@@ -93,6 +104,10 @@ const styles = StyleSheet.create({
   itemName: {
     color: '#fff',
     marginTop: 5
+  },
+  listFooter: {
+    marginTop: 20,
+    alignItems: 'center' 
   }
 });
 

@@ -51,10 +51,6 @@ export const Restaurant = {
 
 export const Order = {
 	getList(token) {
-		return callWaitrApi('get', 'order/history', token);
-	},
-	get(token, orderId) {
-		const path = 'order/live/' + orderId;
-		return callWaitrApi('get', path, token);
+		return callWaitrApi('get', 'order/historyV2', token);
 	}
 }

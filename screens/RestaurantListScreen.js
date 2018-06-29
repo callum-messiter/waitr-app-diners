@@ -4,6 +4,7 @@ import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, ListItem, Icon } from 'react-native-elements';
 import { setRestaurants } from '../actions';
 import { Restaurant } from '../utilities/waitrApi';
+import { getBreakdown as getCartBreakdown } from '../utilities/CartHelper';
 import CartButton from '../components/CartButton';
 import RestaurantRightIcon from '../components/RestaurantRightIcon';
 
@@ -28,8 +29,10 @@ class RestaurantListScreen extends React.Component {
     });
   }
 
-  _navigateToCategoryList(restaurant) {
-    this.props.navigation.navigate('CategoryList', {
+  _navigateToNextScreen(restaurant) {
+    // const cartData = getCartBreakdown(this.props.carts, restaurant.restaurantId).data;
+    // const targetScreen = ( cartData.hasOwnProperty('tableNo') ) ? 'CategoryList' : 'SetTableNumber'
+    this.props.navigation.navigate('SetTableNumber', {
       restaurantId: restaurant.restaurantId,
       restaurantName: restaurant.name,
       menuId: restaurant.menus[0].menuId, /* For now the restaurant has just one menu */
@@ -45,11 +48,11 @@ class RestaurantListScreen extends React.Component {
           renderItem={({ item: restaurant }) => (
             <ListItem
               title={restaurant.name}
-              onPress={() => this._navigateToCategoryList(restaurant)}
+              onPress={() => this._navigateToNextScreen(restaurant)}
               rightIcon={
                 <RestaurantRightIcon 
                   restaurantId={restaurant.restaurantId}
-                  onPress={() => this._navigateToCategoryList(restaurant)}
+                  onPress={() => this._navigateToNextScreen(restaurant)}
                 />
               }
             />

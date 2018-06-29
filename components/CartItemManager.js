@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { addItemToCart, removeItemFromCart } from '../actions';
 import { StyleSheet, View, FlatList, Button } from 'react-native';
 import { Text, ListItem, Icon, Badge } from 'react-native-elements';
+import Websockets from '../utilities/Websockets';
 import CartButton from './CartButton';
 import NumItemsBadge from './NumItemsBadge';
 import shortId from 'shortid';
@@ -27,8 +28,10 @@ class CartItemManager extends React.Component {
         price: this.props.item.price
       },
       restaurantId: this.props.restaurantId,
-      menuId: this.props.menuId,
+      menuId: this.props.menuId
     });
+    const userJoinedTable = Websockets.events.outbound.userJoinedTable;
+    this._sendTableUpdateToServer(userJoinedTable);
   }
 
   /* 
@@ -53,6 +56,25 @@ class CartItemManager extends React.Component {
     this.props.removeItemFromCart({
       item: cartItem, 
       restaurantId: this.props.restaurantId
+    });
+  }
+
+  _sendTableUpdateToServer(eventType) {
+    const cart = this.props.carts.find((cart) => {
+      return cart.restaurantId == this.props.restaurantId;
+    });
+    if(cart !== undefined) return;
+    if(cart.items.length > 0) return;
+
+    Websockets.emitMessage(eventType, {
+      headers: {
+        token: this.props.user.token
+      },
+      table: {
+        restaurantId: this.props.restaurantId,
+        customerId: this.props.user.userId,
+        tableNo: cart.tableNo
+      }
     });
   }
 
@@ -116,6 +138,7 @@ const styles = StyleSheet.create({
 
 const mapPropsToState = (state) => ({
   carts: state.carts,
+  user: state.user
 });
 
 export default connect(mapPropsToState, {

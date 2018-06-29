@@ -7,7 +7,7 @@ export const setOrders = (payload) => {
 	};
 };
 
-export const updateOrderStatus = (order) => {
+export const updateOrderStatus = (payload) => {
 	return {
 		type: actions.UPDATE_ORDER_STATUS,
 		payload: payload

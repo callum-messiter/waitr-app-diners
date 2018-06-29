@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Image, Text, TextInput } from 'react-native';
-import { Order } from '../utilities/waitrApi';
 
 class OrderDetailsScreen extends React.Component {
 
@@ -13,27 +12,17 @@ class OrderDetailsScreen extends React.Component {
     };
   };
 
-  componentWillMount() {
-    this._getOrderDetailsFromBackend(
-      this.props.user.token,
-      this.props.navigation.getParam('orderId', null)
-    );
-  }
-
-  _getOrderDetailsFromBackend(token, orderId) {
-    return Order.get(token, orderId)
-    .then((res) => {
-      /* TODO: the order state should have two props: list[] and focus{}. Here we dispatch the setFocusOrder action */
-      console.log(res);
-    }).catch((err) => {
-      console.log(err);
-    });
-  }
-
   render() {
+    const orderId = this.props.navigation.getParam('orderId', null);
+    const order = this.props.orders.find((o) => {
+      return o.orderId == this.props.navigation.getParam('orderId', null);
+    });
+    /* These should not arise; log errors if they do */
+    if(order === undefined) return null;
     return (
       <View>
-      	<Text>Order Details</Text>
+      	<Text>{`${order.restaurantName}, £${parseFloat(order.price).toFixed(2)} (${order.items.length})`}</Text>
+        <Text>{order.status}</Text>
       </View>
     )
   }
@@ -43,7 +32,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStoreToProps = state => ({
-  user: state.user
+  user: state.user,
+  orders: state.orders
 });
 
 export default connect(mapStoreToProps, {})(OrderDetailsScreen);

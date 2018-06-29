@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import TabBarIcon from '../components/TabBarIcon';
 import RestaurantListScreen from '../screens/RestaurantListScreen';
+import TableNumberScreen from '../screens/TableNumberScreen';
 import CategoryListScreen from '../screens/CategoryListScreen';
 import ItemListScreen from '../screens/ItemListScreen';
 import MyOrdersScreen from '../screens/MyOrdersScreen';
@@ -12,6 +13,7 @@ import CheckoutScreen from '../screens/CheckoutScreen';
 
 const RestaurantStack = createStackNavigator({
   RestaurantList: RestaurantListScreen,
+  SetTableNumber: TableNumberScreen,
   CategoryList: CategoryListScreen,
   ItemList: ItemListScreen,
   Checkout: CheckoutScreen,

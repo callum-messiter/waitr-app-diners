@@ -15,15 +15,19 @@ class RestaurantRightIcon extends React.Component {
     const cart = this.props.carts.find((cart) => {
       return cart.restaurantId == this.props.restaurantId;
     });
-    if(cart === undefined) {
+
+    if(cart === undefined || cart.items.length < 1) {
       return ( 
         <Icon name={'chevron-right'} onPress={this.props.onPress} /> 
       );
-    } else {
-      return (
-        <CartButton style={styles.cartBtn} restaurantId={this.props.restaurantId} onPress={this.props.onPress} />
-      );
     }
+    return (
+      <CartButton 
+        style={styles.cartBtn}
+        restaurantId={this.props.restaurantId}
+        onPress={this.props.onPress} 
+      />
+    );
   }
 }
 
