@@ -18,6 +18,7 @@ class LoginScreen extends React.Component {
 
     User.login(this.email, this.password)
     .then((res) => {
+      console.log(res);
       res.data.data.user.isAuth = true;
       this.props.setUser(res.data.data.user);
       Websockets.init();

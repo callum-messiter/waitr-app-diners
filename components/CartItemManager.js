@@ -3,10 +3,12 @@ import { connect } from 'react-redux';
 import { addItemToCart, removeItemFromCart } from '../actions';
 import { StyleSheet, View, FlatList, Button } from 'react-native';
 import { Text, ListItem, Icon, Badge } from 'react-native-elements';
-import Websockets from '../utilities/Websockets';
 import CartButton from './CartButton';
 import NumItemsBadge from './NumItemsBadge';
 import shortId from 'shortid';
+import * as Cart from '../utilities/CartHelper';
+import { isEmpty as _isEmpty } from 'underscore';
+import Websockets from '../utilities/Websockets';
 
 class CartItemManager extends React.Component {
 
@@ -18,6 +20,14 @@ class CartItemManager extends React.Component {
   }
 
   _addItemToCart() {
+    const restaurantId = this.props.restaurantId;
+
+    const cart = Cart.getBreakdown(this.props.carts, restaurantId);
+    /* Should never happen */
+    if(_isEmpty(cart.data)) {
+      return console.log('CartItemManager: cannot add item to non-existent cart');
+    }
+
     this.props.addItemToCart({
       item: {
         itemId: this.props.item.itemId,
@@ -27,11 +37,13 @@ class CartItemManager extends React.Component {
         description: this.props.item.description,
         price: this.props.item.price
       },
-      restaurantId: this.props.restaurantId,
+      restaurantId: restaurantId,
       menuId: this.props.menuId
     });
-    const userJoinedTable = Websockets.events.outbound.userJoinedTable;
-    this._sendTableUpdateToServer(userJoinedTable);
+
+    if(cart.numItems > 0) return;
+    /* User becomes an active member of his current table */
+    Websockets.sendUserJoinedTableMsg(this.props.user, restaurantId, cart.data.tableNo);
   }
 
   /* 
@@ -42,59 +54,45 @@ class CartItemManager extends React.Component {
 		If there are multiple instances of a menu item in the cart, we will just remove the first one found. 
 		When we introduce item customisation (e.g. 'with salad'), the user will no longer be able to arbitrarily
 		remove cart items using + and - icons; they will only be able to remove a specific item directly, by 
-		referncing itscartItemId.
+		referncing its cartItemId.
 	*/
   _removeItemFromCart() {
-  	const cart = this.props.carts.find((cart) => {
-      return cart.restaurantId == this.props.restaurantId;
-    });
-    if(cart === undefined) return;
+    const itemId = this.props.item.itemId;
+    const restaurantId = this.props.restaurantId;
+    const cart = Cart.findItem(this.props.carts, restaurantId, itemId);
+    
+    /* Should never happen */
+    if(!cart.exists || !cart.containsItem) {
+      return console.log('CartItemManager: ' + cart.error);
+    }
 
-    const cartItem = cart.items.find((item) => {
-      return item.itemId == this.props.item.itemId;
-    });
     this.props.removeItemFromCart({
-      item: cartItem, 
-      restaurantId: this.props.restaurantId
+      item: cart.itemData, 
+      restaurantId: restaurantId
     });
-  }
 
-  _sendTableUpdateToServer(eventType) {
-    const cart = this.props.carts.find((cart) => {
-      return cart.restaurantId == this.props.restaurantId;
-    });
-    if(cart !== undefined) return;
-    if(cart.items.length > 0) return;
-
-    Websockets.emitMessage(eventType, {
-      headers: {
-        token: this.props.user.token
-      },
-      table: {
-        restaurantId: this.props.restaurantId,
-        customerId: this.props.user.userId,
-        tableNo: cart.tableNo
-      }
-    });
+    const removingFinalItem = (cart.cartData.items.length === 1) ? true : false;
+    const tableNo = cart.cartData.tableNo;
+    if(removingFinalItem) {
+      Websockets.sendUserLeftTableMsg(this.props.user, restaurantId, tableNo);
+    }
   }
 
   render() {
-  	const cart = this.props.carts.find((cart) => {
-      return cart.restaurantId == this.props.restaurantId;
-    });
+  	const cart = Cart.getBreakdown(this.props.carts, this.props.restaurantId);
 
-    if(cart === undefined) return(
+    if(_isEmpty(cart.data)) return(
 	    <Icon
 			  name={'add'}
 			  onPress={() => { this._addItemToCart() }}
 			/>
 		);
 
-    const num = cart.items.filter((item) => {
+    const num = cart.data.items.filter((item) => {
       return item.itemId == this.props.item.itemId;
     }).length;
 
-		if(num < 1) return (
+		if(num < 1) return(
 			<Icon
 			  name={'add'}
 			  onPress={() => { this._addItemToCart() }}

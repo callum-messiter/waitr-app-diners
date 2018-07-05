@@ -31,22 +31,25 @@ class TableNumberScreen extends React.Component {
     const fieldIsValid = this._validateField(this.tableNo);
     if(fieldIsValid !== true) {
       const error = fieldIsValid;
-      /* TODO: display flash message */
-      return console.log(error);
+      return console.log(error); /* TODO: display flash message */
     }
+
     const restaurantId = this.props.navigation.getParam('restaurantId', null);
     const restaurantName = this.props.navigation.getParam('restaurantName', null);
     const menuId = this.props.navigation.getParam('menuId', null);
     const tableNo = this.tableNo;
-
     const cart = getCartBreakdown(this.props.carts, restaurantId);
-    if(_isEmpty(cart.data)) {
+    
+    /* If the cart doesn't exist yet, create it */
+    if(_isEmpty(cart.data)) { 
       this.props.createNewCart( {restaurantId, menuId, tableNo} );
     } else {
       this.props.updateCartTableNo( {restaurantId, tableNo} );
-      /* If cart has items when user changes table no, update on backend */
-      const userJoinedTable = Websockets.events.outbound.userJoinedTable;
-      this._sendTableUpdateToServer(userJoinedTable);
+    }
+
+    if(cart.data.tableNo != tableNo && cart.numItems > 0) {
+      /* User becomes an active member of the new table */
+      Websockets.sendUserJoinedTableMsg(this.props.user, restaurantId, this.tableNo);
     }
 
     /* Move on to list of menu categories */
@@ -60,26 +63,6 @@ class TableNumberScreen extends React.Component {
   _validateField(value) {
     if( !V.isSet(value) ) return V.errors.fieldsEmpty;
     return true;
-  }
-
-  _sendTableUpdateToServer(eventType) {
-    const restaurantId = this.props.navigation.getParam('restaurantId', null);
-    const cart = this.props.carts.find((cart) => {
-      return cart.restaurantId == restaurantId;
-    });
-    if(cart !== undefined) return;
-    if(cart.items.length > 0) return;
-
-    Websockets.emitMessage(eventType, {
-      headers: {
-        token: this.props.user.token
-      },
-      table: {
-        restaurantId: restaurantId,
-        customerId: this.props.user.userId,
-        tableNo: cart.tableNo
-      }
-    });
   }
 
   render() {

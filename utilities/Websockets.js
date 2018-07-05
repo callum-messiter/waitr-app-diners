@@ -83,15 +83,30 @@ export default class Websockets {
 		return queryString;
 	};
 
-	static sendTableUpdateToServer(eventType, data) {
-	    this.emitMessage(eventType, {
+	static sendUserJoinedTableMsg(user, restaurantId, tableNo) {
+		const userJoinedTable = this.events.outbound.userJoinedTable;
+		this.emitMessage(userJoinedTable, {
 			headers: {
-				token: data.token
+				token: user.token
 			},
 			table: {
-				restaurantId: data.restaurantId,
-				customerId: data.userId,
-				tableNo: data.tableNo
+				restaurantId: restaurantId,
+				customerId: user.userId,
+				tableNo: tableNo
+			}
+	    });
+	}
+
+	static sendUserLeftTableMsg(user, restaurantId, tableNo) {
+		const userLeftTable = this.events.outbound.userLeftTable;
+		this.emitMessage(userLeftTable, {
+			headers: {
+				token: user.token
+			},
+			table: {
+				restaurantId: restaurantId,
+				customerId: user.userId,
+				tableNo: tableNo
 			}
 	    });
 	}

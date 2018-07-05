@@ -4,6 +4,8 @@ import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, ListItem, Icon, Button } from 'react-native-elements';
 import { addItemToCart, removeItemFromCart, resetCart } from '../actions';
 import * as Cart from '../utilities/CartHelper';
+import Websockets from '../utilities/Websockets'; 
+import { isEmpty as _isEmpty } from 'underscore';
 
 class CheckoutScreen extends React.Component {
   
@@ -21,10 +23,23 @@ class CheckoutScreen extends React.Component {
 
   _removeItemFromCart(item) {
     const restaurantId = this.props.navigation.getParam('restaurantId', null);
+    const cart = Cart.findItem(this.props.carts, restaurantId, item.itemId);
+    
+    /* Should never happen */
+    if(!cart.exists || !cart.containsItem) {
+      return console.log('CheckoutScreen: ' + cart.error);
+    }
+
     this.props.removeItemFromCart({
-      item: item, 
+      item: cart.itemData, 
       restaurantId: restaurantId
     });
+
+    const removingFinalItem = (cart.cartData.items.length === 1) ? true : false;
+    const tableNo = cart.cartData.tableNo;
+    if(removingFinalItem) {
+      Websockets.sendUserJoinedTableMsg(this.props.user, restaurantId, tableNo);
+    }
   }
 
   _generateNumItemsString(cart) {
@@ -87,7 +102,8 @@ const styles = StyleSheet.create({
 });
 
 const mapPropsToState = (state) => ({
-  carts: state.carts
+  carts: state.carts,
+  user: state.user
 });
 
 export default connect(mapPropsToState, {
