@@ -3,12 +3,14 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import RootNavigation from '../navigation/RootNavigation';
 import { connect } from 'react-redux';
 import Websockets from '../utilities/Websockets';
+import PushNotification from '../utilities/PushNotification';
 
 class RootComponent extends React.Component {
 
   constructor(props) {
     super(props);
     Websockets.init();
+    PushNotification.init();
   }
 
   render() {
@@ -35,6 +37,7 @@ const styles = StyleSheet.create({
 
 const mapStoreToProps = state => ({
   user: state.user,
+  carts: state.carts
 });
 
 export default connect(mapStoreToProps)(RootComponent);

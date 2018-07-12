@@ -8,7 +8,7 @@ import rootReducer from '../reducers'; /* The value from combineReducers */
 const persistConfig = {
 	key: 'root',
 	storage: storage,
-	whitelist: ['user', 'carts'],
+	whitelist: ['user', 'carts', 'pushNotification'],
 	stateReconciler: autoMergeLevel2 /* See "Merge Process" section for details. */
 };
 

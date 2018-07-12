@@ -38,7 +38,7 @@ class CheckoutScreen extends React.Component {
     const removingFinalItem = (cart.cartData.items.length === 1) ? true : false;
     const tableNo = cart.cartData.tableNo;
     if(removingFinalItem) {
-      Websockets.sendUserJoinedTableMsg(this.props.user, restaurantId, tableNo);
+      Websockets.sendUserLeftTableMsg(this.props.user, restaurantId, tableNo);
     }
   }
 

@@ -21,3 +21,7 @@ export const cartActions = {
 	UPDATE_CART_TABLE_NO: 'UPDATE_CART_TABLE_NO',
 	RESET_CART: 'RESET_CART'
 }
+
+export const pushNotificationActions = {
+	SET_PN_TOKEN: 'SET_PN_TOKEN'
+}
